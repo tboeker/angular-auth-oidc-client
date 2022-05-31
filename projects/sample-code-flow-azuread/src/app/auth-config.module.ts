@@ -10,7 +10,7 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
         redirectUrl: window.location.origin,
         clientId: '09192cbe-f38d-4434-8da7-0de7bc768887',
         // scope: 'openid profile offline_access email api://09192cbe-f38d-4434-8da7-0de7bc768887/access_as_user',
-        scope: 'openid profile offline_access email',
+        scope: 'openid profile offline_access email Team.ReadBasic.All Channel.ReadBasic.All ChannelMessage.Send ChannelMessage.Read.All Chat.ReadBasic',
         responseType: 'code',
         silentRenew: true,
         maxIdTokenIatOffsetAllowedInSeconds: 600,
