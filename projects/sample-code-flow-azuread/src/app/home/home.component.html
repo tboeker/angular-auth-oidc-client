@@ -3,3 +3,9 @@
 <br />
 Is Authenticated: {{ isAuthenticated }}
 <pre>{{ userData$ | async | json }}</pre>
+<br />
+Auth Result:
+<pre>{{ authorizationResult$ | async | json }}</pre>
+<br />
+Access Token:
+<p>{{ accessToken$ | async }}</p>

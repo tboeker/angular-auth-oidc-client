@@ -8,6 +8,8 @@ import { Observable } from 'rxjs';
 })
 export class HomeComponent implements OnInit {
   userData$: Observable<UserDataResult>;
+  accessToken$: Observable<string>;
+  authorizationResult$: Observable<any>;
   isAuthenticated = false;
 
   constructor(public oidcSecurityService: OidcSecurityService) {}
@@ -19,5 +21,10 @@ export class HomeComponent implements OnInit {
       console.warn('authenticated: ', isAuthenticated);
     });
     this.userData$ = this.oidcSecurityService.userData$;
+
+
+    this.accessToken$ = this.oidcSecurityService.getAccessToken();
+
+    this.authorizationResult$ = this.oidcSecurityService.getAuthenticationResult();
   }
 }
