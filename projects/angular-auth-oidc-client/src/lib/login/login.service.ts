@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { AuthOptions } from '../auth-options';
+import { AuthOptionsProvider } from '../config/auth-options.provider';
 import { OpenIdConfiguration } from '../config/openid-configuration';
 import { StoragePersistenceService } from '../storage/storage-persistence.service';
 import { LoginResponse } from './login-response';
@@ -17,11 +18,16 @@ export class LoginService {
     private readonly popUpLoginService: PopUpLoginService,
     private readonly standardLoginService: StandardLoginService,
     private readonly storagePersistenceService: StoragePersistenceService,
-    private readonly popupService: PopUpService
+    private readonly popupService: PopUpService,
+    @Optional() private readonly authOptionsProvider: AuthOptionsProvider
   ) {}
 
   login(configuration: OpenIdConfiguration, authOptions?: AuthOptions): void {
     const { usePushedAuthorisationRequests } = configuration;
+
+    if (this.authOptionsProvider) {
+      authOptions = this.authOptionsProvider.getLoginOptions(configuration, authOptions);
+    }
 
     if (authOptions?.customParams) {
       this.storagePersistenceService.write('storageCustomParamsAuthRequest', authOptions.customParams, configuration);

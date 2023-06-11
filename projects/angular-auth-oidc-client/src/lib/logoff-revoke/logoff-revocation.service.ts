@@ -1,9 +1,10 @@
 import { HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, concatMap, retry, switchMap } from 'rxjs/operators';
 import { DataService } from '../api/data.service';
 import { LogoutAuthOptions } from '../auth-options';
+import { AuthOptionsProvider } from '../config/auth-options.provider';
 import { OpenIdConfiguration } from '../config/openid-configuration';
 import { ResetAuthDataService } from '../flows/reset-auth-data.service';
 import { CheckSessionService } from '../iframe/check-session.service';
@@ -22,13 +23,18 @@ export class LogoffRevocationService {
     private readonly urlService: UrlService,
     private readonly checkSessionService: CheckSessionService,
     private readonly resetAuthDataService: ResetAuthDataService,
-    private readonly redirectService: RedirectService
+    private readonly redirectService: RedirectService,
+    @Optional() private readonly authOptionsProvider: AuthOptionsProvider
   ) {}
 
   // Logs out on the server and the local client.
   // If the server state has changed, check session, then only a local logout.
   logoff(config: OpenIdConfiguration, allConfigs: OpenIdConfiguration[], logoutAuthOptions?: LogoutAuthOptions): Observable<unknown> {
     this.loggerService.logDebug(config, 'logoff, remove auth', logoutAuthOptions);
+
+    if (this.authOptionsProvider) {
+      logoutAuthOptions = this.authOptionsProvider.getLogoutOptions(config, logoutAuthOptions);
+    }
 
     const { urlHandler, customParams } = logoutAuthOptions || {};
 
