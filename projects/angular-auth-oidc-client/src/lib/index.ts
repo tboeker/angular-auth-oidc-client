@@ -5,6 +5,7 @@ export * from './auth-state/auth-result';
 export * from './auth-state/auth-state';
 export * from './auth.module';
 export * from './auto-login/auto-login-all-routes.guard';
+export * from './auto-login/auto-login-auth-options.provider';
 export * from './auto-login/auto-login-partial-routes.guard';
 export * from './config/auth-well-known/auth-well-known-endpoints';
 export * from './config/config.service';
@@ -27,3 +28,4 @@ export * from './user-data/userdata-result';
 export * from './validation/jwtkeys';
 export * from './validation/state-validation-result';
 export * from './validation/validation-result';
+

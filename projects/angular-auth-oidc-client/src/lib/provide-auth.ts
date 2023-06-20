@@ -8,6 +8,8 @@ import {
   PASSED_CONFIG,
   PassedInitialConfig,
 } from './auth-config';
+import { AbstractAutoLoginAuthOptionsProvider } from './auto-login/auto-login-auth-options.provider';
+import { DefaultAutoLoginAuthOptionsProvider } from './auto-login/default-auto-login-auth-options.provider';
 import { StsConfigLoader } from './config/loader/config-loader';
 import { AbstractLoggerService } from './logging/abstract-logger.service';
 import { ConsoleLoggerService } from './logging/console-logger.service';
@@ -34,6 +36,10 @@ export function _provideAuth(passedConfig: PassedInitialConfig): Provider[] {
     {
       provide: AbstractSecurityStorage,
       useClass: DefaultSessionStorageService,
+    },
+    {
+      provide: AbstractAutoLoginAuthOptionsProvider,
+      useClass: DefaultAutoLoginAuthOptionsProvider,
     },
     { provide: AbstractLoggerService, useClass: ConsoleLoggerService },
   ];

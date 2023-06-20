@@ -10,6 +10,7 @@ import { AuthOptions } from '../auth-options';
 import { AuthStateService } from '../auth-state/auth-state.service';
 import { ConfigurationService } from '../config/config.service';
 import { LoginService } from '../login/login.service';
+import { AbstractAutoLoginAuthOptionsProvider } from './auto-login-auth-options.provider';
 import { AutoLoginService } from './auto-login.service';
 
 @Injectable({ providedIn: 'root' })
@@ -19,7 +20,8 @@ export class AutoLoginPartialRoutesGuard {
     private readonly authStateService: AuthStateService,
     private readonly loginService: LoginService,
     private readonly configurationService: ConfigurationService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly autoLoginOptionsProvider: AbstractAutoLoginAuthOptionsProvider
   ) {}
 
   canLoad(): Observable<boolean> {
@@ -34,7 +36,8 @@ export class AutoLoginPartialRoutesGuard {
       this.configurationService,
       this.authStateService,
       this.autoLoginService,
-      this.loginService
+      this.loginService,
+      this.autoLoginOptionsProvider
     );
   }
 
@@ -52,6 +55,7 @@ export class AutoLoginPartialRoutesGuard {
       this.authStateService,
       this.autoLoginService,
       this.loginService,
+      this.autoLoginOptionsProvider,
       authOptions
     );
   }
@@ -70,6 +74,7 @@ export class AutoLoginPartialRoutesGuard {
       this.authStateService,
       this.autoLoginService,
       this.loginService,
+      this.autoLoginOptionsProvider,
       authOptions
     );
   }
@@ -81,6 +86,7 @@ export function autoLoginPartialRoutesGuard(): Observable<boolean> {
   const loginService = inject(LoginService);
   const autoLoginService = inject(AutoLoginService);
   const router = inject(Router);
+  const autoLoginOptionsProvider = inject(AbstractAutoLoginAuthOptionsProvider);
 
   const url =
     router.getCurrentNavigation()?.extractedUrl.toString().substring(1) ?? '';
@@ -90,7 +96,8 @@ export function autoLoginPartialRoutesGuard(): Observable<boolean> {
     configurationService,
     authStateService,
     autoLoginService,
-    loginService
+    loginService,
+    autoLoginOptionsProvider
   );
 }
 
@@ -100,6 +107,7 @@ function checkAuth(
   authStateService: AuthStateService,
   autoLoginService: AutoLoginService,
   loginService: LoginService,
+  autoLoginOptionsProvider: AbstractAutoLoginAuthOptionsProvider,
   authOptions?: AuthOptions
 ): Observable<boolean> {
   return configurationService.getOpenIDConfiguration().pipe(
@@ -113,6 +121,7 @@ function checkAuth(
 
       if (!isAuthenticated) {
         autoLoginService.saveRedirectRoute(configuration, url);
+        authOptions = autoLoginOptionsProvider.getAuthOptions(authOptions);
         if (authOptions) {
           loginService.login(configuration, authOptions);
         } else {
